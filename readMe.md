@@ -20,7 +20,7 @@ A script that produces the following:
 2) A modified `destination` sheet with the `descriptor` columns populated. This is sourced from `category-descriptor` and values from `master_source`
     - For each row, the script would fetch descriptors for that item's category from `category-descriptor`.
     - For each descriptor, the script would then find the values for that part number (which I'm assuming is unique) in the `master_source` sheet.
-    - As an example, here's the first descriptor to the first row
+    - As an example, here's the first descriptor to the first row in `destination`
 
 | Descriptor Name1 | Descriptor Value1 | Descriptor UOM1
 |--------------|-----------|------------|
