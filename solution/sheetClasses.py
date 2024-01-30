@@ -14,6 +14,20 @@ MASTER_NULL_SYMBOL = "$"
 MASTER_CATEGORY_COLUMN = "Description"
 
 
+class Solver:
+    def __init__(self, masterSheet, cdSheet, destinationSheet):
+        self.master = Master(masterSheet)
+        self.cds = CategoryDescriptors(cdSheet)
+        self.destination = Destination(destinationSheet)
+
+    def formatMasterToCategoryDescriptors(self):
+        # return df of descriptors, with associated UOM if there is one.
+        # input_df columns included: CATEGORY_CODE, CATEGORY_NAME, DESCRIPTOR_NAME
+        # rv columns included: CATEGORY_CODE, CATEGORY_NAME, DESCRIPTOR_NAME, DISP_SEQ (auto generated), FILTER_ENABLED, FILTER_SEQ
+
+        pass
+
+
 class Master:
     def __init__(self, masterSheet) -> None:
         self.masterdf = pd.read_excel(masterSheet)
@@ -53,15 +67,12 @@ class Master:
         topFiveDf = pd.DataFrame(cdData).nlargest(5, "popPercent")
         return topFiveDf["names"].values
 
-    def wrapTopDescriptors(self):
-        # return df of descriptors, with associated UOM if there is one.
-        # columns included: CATEGORY_CODE, CATEGORY_NAME, DESCRIPTOR_NAME, DISP_SEQ (auto generated), FILTER_ENABLED, FILTER_SEQ
-        pass
+    def getTopDescriptors(self):
+        # per each category
+        #   getTopCategoryDescriptors
+        #   get CATEGORY_CODE and CATEGORY_NAME
+        # add all the dataframes together, return the df
 
-    def getTopDescriptors():
-        # per each category, getTopCategoryDescriptors
-        # add all the dataframes together
-        # return a dataframe of descriptors
         pass
 
 
