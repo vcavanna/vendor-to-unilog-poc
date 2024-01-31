@@ -1,5 +1,6 @@
 import pandas as pd
 
+# Columns in Master that are not to be included in population analysis
 NOT_MASTER_DESCRIPTORS = set(
     [
         "Description",
@@ -10,8 +11,16 @@ NOT_MASTER_DESCRIPTORS = set(
     ]
 )
 
+# Important symbols in master sheet
 MASTER_NULL_SYMBOL = "$"
 MASTER_CATEGORY_COLUMN = "Description"
+UNIT_INDICATOR = "(Unit)"
+
+# Important columns in Category_Descriptor sheet
+CATEGORY_CODE = "CATEGORY_CODE"
+CATEGORY_NAME = "CATEGORY_NAME"
+DESCRIPTOR_NAME = "DESCRIPTOR_NAME"
+DISP_SEQ = "DISP_SEQ"
 
 
 class Solver:
@@ -49,7 +58,8 @@ class Master:
         allColumns = df.columns.values
         # filter that list to only include descriptors (so don't include the enum NOT_MASTER_DESCRIPTORS, or '(unit)' categories)
         descriptorColumns = filter(
-            lambda x: not (x in NOT_MASTER_DESCRIPTORS or "(Unit)" in x), allColumns
+            lambda x: not (x in NOT_MASTER_DESCRIPTORS or UNIT_INDICATOR in x),
+            allColumns,
         )
         return list(descriptorColumns)
 
@@ -70,12 +80,31 @@ class Master:
     # df containing only one category
     def getTopDescriptorsInCategory(df):
         # return a df of CATEGORY_CODE, CATEGORY_NAME, DESCRIPTOR_NAME
-        pass
+        if not (MASTER_CATEGORY_COLUMN in df.columns):
+            raise KeyError("{} not found in input df".format(MASTER_CATEGORY_COLUMN))
+
+        topDescriptorsList = Master.getTopDescriptorsList(df)
+        categoryWords = df[MASTER_CATEGORY_COLUMN].iloc[0].split(" ")
+        categoryCode = categoryWords[0]
+        categoryName = " ".join(categoryWords[1:])
+        categoryCodeList = [categoryCode for x in topDescriptorsList]
+        categoryNameList = [categoryName for x in topDescriptorsList]
+        dispSeq = list(range(len(topDescriptorsList)))
+
+        rvDf = pd.DataFrame(
+            {
+                CATEGORY_CODE: categoryCodeList,
+                CATEGORY_NAME: categoryNameList,
+                DESCRIPTOR_NAME: topDescriptorsList,
+                DISP_SEQ: dispSeq,
+            }
+        )
+
+        return rvDf
 
     def getTopDescriptors(self):
         # per each category
-        #   getTopCategoryDescriptors
-        #   get CATEGORY_CODE and CATEGORY_NAME
+        #   getTopDescriptorsInCategory
         # add all the dataframes together, return the df
 
         pass

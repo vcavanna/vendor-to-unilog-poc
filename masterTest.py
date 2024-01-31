@@ -1,8 +1,15 @@
 import unittest
+import pandas as pd
+import solution.sheetClasses as sc
 from solution.sheetClasses import Master
 
 m = Master("problem_set\\test_master_source_dummy.xlsx")
 flangeMountSubset = m.getGroupedCategories().get_group("10000030 FLANGE MOUNT")
+expectedTopCategoryDescriptors = [
+    "TPSA Certificate",
+    "Industrial Part Type",
+    "Rod Spacing",
+]
 
 
 class TestMaster(unittest.TestCase):
@@ -50,17 +57,28 @@ class TestMaster(unittest.TestCase):
 
         self.assertEqual(set(actualDescriptorColumns), set(expectedDescriptorColumns))
 
-    def testGetTopCategoryDescriptors(self):
-        expectedTopDescriptors = set(
-            [
-                "Rod Spacing",
-                "TPSA Certificate",
-                "Industrial Part Type",
-            ]
-        )
-        actualTopDescriptors = set(Master.getTopDescriptorsList(flangeMountSubset))
+    def testGetTopDescriptorsList(self):
+        actualTopDescriptors = Master.getTopDescriptorsList(flangeMountSubset)
 
-        self.assertEquals(expectedTopDescriptors, actualTopDescriptors)
+        self.assertTrue((expectedTopCategoryDescriptors == actualTopDescriptors).all())
+
+    def testGetTopDescriptorsInCategory(self):
+        expectedTopDescriptorsDf = pd.DataFrame(
+            {
+                sc.CATEGORY_CODE: "10000030",
+                sc.CATEGORY_NAME: "FLANGE MOUNT",
+                sc.DESCRIPTOR_NAME: expectedTopCategoryDescriptors,
+                sc.DISP_SEQ: [0, 1, 2],
+            }
+        )
+        actualTopDescriptorsDf = Master.getTopDescriptorsInCategory(flangeMountSubset)
+
+        for column in expectedTopDescriptorsDf.columns:
+            self.assertTrue(
+                (
+                    expectedTopDescriptorsDf[column] == actualTopDescriptorsDf[column]
+                ).all()
+            )
 
 
 if __name__ == "__main__":
