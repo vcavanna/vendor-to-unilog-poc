@@ -35,18 +35,18 @@ class Master:
     def getGroupedCategories(self, column=MASTER_CATEGORY_COLUMN):
         return self.masterdf.groupby(column)
 
-    def getSeriesPopulationData(self, df, column, char=MASTER_NULL_SYMBOL):
+    def getSeriesPopulationData(df, column, char=MASTER_NULL_SYMBOL):
         # get the % not populated by '$' (with exceptions)
         percentPopulated = df[column].value_counts(normalize=True)
         if not ("$" in percentPopulated.index):
             return 100
         return (1 - percentPopulated[MASTER_NULL_SYMBOL]) * 100
 
-    def getDescriptorColumns(self):
+    def getDescriptorColumns(df):
         # returns a list of only the descriptor columns
 
         # get a list of master_source columns
-        allColumns = self.masterdf.columns.values
+        allColumns = df.columns.values
         # filter that list to only include descriptors (so don't include the enum NOT_MASTER_DESCRIPTORS, or '(unit)' categories)
         descriptorColumns = filter(
             lambda x: not (x in NOT_MASTER_DESCRIPTORS or "(Unit)" in x), allColumns
@@ -54,18 +54,23 @@ class Master:
         return list(descriptorColumns)
 
     # df containing only one category
-    def getTopCategoryDescriptors(self, df):
-        # return a list of the top 5 category descriptors
-        columns = self.getDescriptorColumns()
+    def getTopDescriptorsList(df):
+        # get a list of the top categories in the dataframe
+        columns = Master.getDescriptorColumns(df)
         cdData = {"names": [], "popPercent": []}
         for column in columns:
-            percentPopulated = self.getSeriesPopulationData(df, column)
+            percentPopulated = Master.getSeriesPopulationData(df, column)
             if percentPopulated > 0:
                 cdData["names"].append(column)
                 cdData["popPercent"].append(percentPopulated)
 
         topFiveDf = pd.DataFrame(cdData).nlargest(5, "popPercent")
         return topFiveDf["names"].values
+
+    # df containing only one category
+    def getTopDescriptorsInCategory(df):
+        # return a df of CATEGORY_CODE, CATEGORY_NAME, DESCRIPTOR_NAME
+        pass
 
     def getTopDescriptors(self):
         # per each category

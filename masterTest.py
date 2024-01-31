@@ -1,7 +1,7 @@
 import unittest
-import solution.sheetClasses as sheets
+from solution.sheetClasses import Master
 
-m = sheets.Master("problem_set\\test_master_source_dummy.xlsx")
+m = Master("problem_set\\test_master_source_dummy.xlsx")
 flangeMountSubset = m.getGroupedCategories().get_group("10000030 FLANGE MOUNT")
 
 
@@ -16,7 +16,7 @@ class TestMaster(unittest.TestCase):
 
     def testGetSeriesPopulationData(self):
         expectedPopulation = 60
-        actualPopulation = m.getSeriesPopulationData(m.masterdf, "Rod Spacing")
+        actualPopulation = Master.getSeriesPopulationData(m.masterdf, "Rod Spacing")
         self.assertEqual(actualPopulation, expectedPopulation)
 
     def testGetDescriptorColumns(self):
@@ -46,7 +46,7 @@ class TestMaster(unittest.TestCase):
             "Rod Length Output",
             "Rod Spacing",
         ]
-        expectedDescriptorColumns = m.getDescriptorColumns()
+        expectedDescriptorColumns = Master.getDescriptorColumns(m.masterdf)
 
         self.assertEqual(set(actualDescriptorColumns), set(expectedDescriptorColumns))
 
@@ -58,7 +58,7 @@ class TestMaster(unittest.TestCase):
                 "Industrial Part Type",
             ]
         )
-        actualTopDescriptors = set(m.getTopCategoryDescriptors(flangeMountSubset))
+        actualTopDescriptors = set(Master.getTopDescriptorsList(flangeMountSubset))
 
         self.assertEquals(expectedTopDescriptors, actualTopDescriptors)
 
