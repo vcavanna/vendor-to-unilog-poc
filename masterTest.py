@@ -80,6 +80,103 @@ class TestMaster(unittest.TestCase):
                 ).all()
             )
 
+    def testGetTopDescriptors(self):
+        cylindricalBearingDf = pd.DataFrame(
+            {
+                sc.CATEGORY_CODE: "067",
+                sc.CATEGORY_NAME: "CYLINDRICAL BEARING",
+                sc.DESCRIPTOR_NAME: [
+                    "TPSA Certificate",
+                    "Industrial Part Type",
+                    "Rod Spacing",
+                ],
+                sc.DISP_SEQ: [0, 1, 2],
+            }
+        )
+        ballBearingDf = pd.DataFrame(
+            {
+                sc.CATEGORY_CODE: "10000001",
+                sc.CATEGORY_NAME: "BALL BEARING",
+                sc.DESCRIPTOR_NAME: [
+                    "Base to Center Height",
+                    "Base to Flange Center Height",
+                    "Industrial Part Type",
+                    "Industrial Part Height",
+                    "Industrial Part Length Datum",
+                ],
+                sc.DISP_SEQ: [0, 1, 2, 3, 4],
+            }
+        )
+        conveyorPulleyDf = pd.DataFrame(
+            {
+                sc.CATEGORY_CODE: "10000020",
+                sc.CATEGORY_NAME: "CONVEYOR PULLEY MONITORING KIT",
+                sc.DESCRIPTOR_NAME: [
+                    "Base to Center Height",
+                    "Base to Flange Center Height",
+                    "Industrial Part Type",
+                    "Industrial Part Height",
+                    "Industrial Part Length Datum",
+                ],
+                sc.DISP_SEQ: [0, 1, 2, 3, 4],
+            }
+        )
+        flangeDf = pd.DataFrame(
+            {
+                sc.CATEGORY_CODE: "10000030",
+                sc.CATEGORY_NAME: "FLANGE MOUNT",
+                sc.DESCRIPTOR_NAME: expectedTopCategoryDescriptors,
+                sc.DISP_SEQ: [0, 1, 2],
+            }
+        )
+        sprocketDf = pd.DataFrame(
+            {
+                sc.CATEGORY_CODE: "804",
+                sc.CATEGORY_NAME: "SPROCKET TOOTHED BELT",
+                sc.DESCRIPTOR_NAME: [
+                    "TPSA Certificate",
+                    "Industrial Part Type",
+                    "Rod Spacing",
+                ],
+                sc.DISP_SEQ: [0, 1, 2],
+            }
+        )
+        electricMotorDf = pd.DataFrame(
+            {
+                sc.CATEGORY_CODE: "B77",
+                sc.CATEGORY_NAME: "ELECTRIC MOTOR BASE CHAIN",
+                sc.DESCRIPTOR_NAME: [
+                    "TPSA Certificate",
+                    "Base to Center Height",
+                    "Base to Flange Center Height",
+                    "Industrial Part Type",
+                    "Industrial Part Height",
+                ],
+                sc.DISP_SEQ: [0, 1, 2, 3, 4],
+            }
+        )
+
+        categoryDfs = [
+            cylindricalBearingDf,
+            ballBearingDf,
+            conveyorPulleyDf,
+            flangeDf,
+            sprocketDf,
+            electricMotorDf,
+        ]
+
+        expectedTopDescriptorsDf = pd.concat(categoryDfs, ignore_index=True)
+        print(expectedTopDescriptorsDf)
+        actualTopDescriptorsDf = m.getTopDescriptors()
+        print(actualTopDescriptorsDf)
+
+        for column in actualTopDescriptorsDf.columns:
+            self.assertTrue(
+                (
+                    expectedTopDescriptorsDf[column] == actualTopDescriptorsDf[column]
+                ).all()
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

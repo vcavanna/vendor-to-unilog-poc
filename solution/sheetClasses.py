@@ -103,11 +103,15 @@ class Master:
         return rvDf
 
     def getTopDescriptors(self):
-        # per each category
-        #   getTopDescriptorsInCategory
-        # add all the dataframes together, return the df
+        groupedCategories = list(self.getGroupedCategories())
+        frames = []
 
-        pass
+        # per each category
+        for category in groupedCategories:
+            categoryDf = category[1]
+            frames.append(Master.getTopDescriptorsInCategory(categoryDf))
+        # add all the dataframes together, return the df
+        return pd.concat(frames, ignore_index=True)
 
 
 class CategoryDescriptors:
