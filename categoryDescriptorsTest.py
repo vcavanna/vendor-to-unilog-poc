@@ -2,6 +2,7 @@ import unittest
 import pandas as pd
 import pandas.testing as pdt
 import solution.sheetClasses as sc
+import os
 from solution.sheetClasses import CategoryDescriptors
 
 cd = CategoryDescriptors("problem_set/category-descriptor-template.xlsx")
@@ -53,7 +54,17 @@ class TestMaster(unittest.TestCase):
         # not writing an assert, visual inspection is fine.
 
     def testExportToSheet(self):
-        pass
+        try:
+            os.remove("./filled_category-descriptor-template.xlsx")
+        except OSError:
+            pass
+        cd.exportToSheet()
+        exported = print(os.path.isfile("./filled_category-descriptor-template.xlsx"))
+        try:
+            os.remove("./filled_category-descriptor-template.xlsx")
+        except OSError:
+            pass
+        self.assertTrue(exported)
 
 
 if __name__ == "__main__":
