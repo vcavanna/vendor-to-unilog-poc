@@ -59,12 +59,12 @@ class TestMaster(unittest.TestCase):
         except OSError:
             pass
         cd.exportToSheet()
-        exported = print(os.path.isfile("./filled_category-descriptor-template.xlsx"))
+        exported = os.path.isfile("./filled_category-descriptor-template.xlsx")
         try:
             os.remove("./filled_category-descriptor-template.xlsx")
         except OSError:
             pass
-        self.assertTrue(exported)
+        self.assertTrue(exported, "File is not exported")
 
 
 if __name__ == "__main__":

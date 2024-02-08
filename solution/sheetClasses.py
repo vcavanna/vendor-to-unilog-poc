@@ -121,7 +121,8 @@ class Master:
 class CategoryDescriptors:
     def __init__(self, cdSheet):
         self.cdDf = pd.read_excel(cdSheet)
-        self.name = "filled_" + cdSheet
+        fileName = cdSheet.split("/")[-1]
+        self.name = "filled_" + fileName
 
     def addConstantColumns(df):
         # adds the unchanging columns to the dataframe, then returns it
@@ -147,12 +148,13 @@ class CategoryDescriptors:
         self.cdDf = pd.concat([self.cdDf, newDf], ignore_index=True)
 
     def exportToSheet(self):
-        pass
+        self.cdDf.to_excel(self.name)
 
 
 class Destination:
     def __init__(self, destinationSheet) -> None:
         self.destinationDf = pd.read_excel(destinationSheet)
+        fileName = destinationSheet.split("/")[-1]
         self.name = "filled_" + destinationSheet
 
     def getOpenDescriptor(self) -> int:
