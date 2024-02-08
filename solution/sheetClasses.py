@@ -21,6 +21,7 @@ CATEGORY_CODE = "CATEGORY_CODE"
 CATEGORY_NAME = "CATEGORY_NAME"
 DESCRIPTOR_NAME = "DESCRIPTOR_NAME"
 DISP_SEQ = "DISP_SEQ"
+FILTER_SEQ = "FILTER_SEQ"
 
 
 class Solver:
@@ -90,6 +91,7 @@ class Master:
         categoryCodeList = [categoryCode for x in topDescriptorsList]
         categoryNameList = [categoryName for x in topDescriptorsList]
         dispSeq = list(range(len(topDescriptorsList)))
+        filterSeq = list(range(len(topDescriptorsList)))
 
         rvDf = pd.DataFrame(
             {
@@ -97,8 +99,10 @@ class Master:
                 CATEGORY_NAME: categoryNameList,
                 DESCRIPTOR_NAME: topDescriptorsList,
                 DISP_SEQ: dispSeq,
+                FILTER_SEQ: filterSeq,
             }
         )
+        rvDf["FILTER_ENABLED"] = pd.Series(["Y"] * len(topDescriptorsList))
 
         return rvDf
 
@@ -119,21 +123,28 @@ class CategoryDescriptors:
         self.cdDf = pd.read_excel(cdSheet)
         self.name = "filled_" + cdSheet
 
-    def addConstantColumns(self):
+    def addConstantColumns(df):
         # adds the unchanging columns to the dataframe, then returns it
         # input is a dataframe
-        self.cdDf["GROUP_NAME"] = pd.series("CNSTNT")
-        self.cdDf["DATA_TYPE"] = pd.series("T")
-        self.cdDf["DESCRIPTOR_TYPE"] = pd.series("Value")
-        self.cdDf["VALUE_DELIMITER"] = pd.series("")
-        self.cdDf["IS_DIFFERENTIATOR_DESCRIPTOR"] = pd.series("N")
-        self.cdDf["ENTITY_TYPE"] = pd.series("I")
-        self.cdDf["PRINT"] = pd.series("Y")
-        self.cdDf["STATUS"] = pd.series("Y")
+        numRows = len(df)
+        constantColumns = [
+            ("GROUP_NAME", "CNSTNT"),
+            ("DATA_TYPE", "T"),
+            ("DESCRIPTOR_TYPE", "Value"),
+            ("VALUE_DELIMITER", ""),
+            ("IS_DIFFERENTIATOR_DESCRIPTOR", "N"),
+            ("ENTITY_TYPE", "I"),
+            ("PRINT", "Y"),
+            ("STATUS", "Y"),
+        ]
+        for column, constant in constantColumns:
+            df[column] = pd.Series([constant] * numRows)
+        return df
 
     def addDescriptors(self, addedDescriptors):
         # intakes a DF as from getTopDescriptors, modifies to the shape of CategoryDescriptors sheet, then adds to the sheet
-        pass
+        newDf = CategoryDescriptors.addConstantColumns(addedDescriptors)
+        self.cdDf = pd.concat([self.cdDf, newDf], ignore_index=True)
 
     def exportToSheet(self):
         pass

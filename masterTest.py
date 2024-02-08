@@ -69,10 +69,15 @@ class TestMaster(unittest.TestCase):
                 sc.CATEGORY_NAME: "FLANGE MOUNT",
                 sc.DESCRIPTOR_NAME: expectedTopCategoryDescriptors,
                 sc.DISP_SEQ: [0, 1, 2],
+                sc.FILTER_SEQ: [0, 1, 2],
+                "FILTER_ENABLED": ["Y", "Y", "Y"],
             }
         )
         actualTopDescriptorsDf = Master.getTopDescriptorsInCategory(flangeMountSubset)
 
+        self.assertTrue(
+            (expectedTopDescriptorsDf.columns == actualTopDescriptorsDf.columns).all()
+        )
         for column in expectedTopDescriptorsDf.columns:
             self.assertTrue(
                 (
@@ -91,6 +96,7 @@ class TestMaster(unittest.TestCase):
                     "Rod Spacing",
                 ],
                 sc.DISP_SEQ: [0, 1, 2],
+                sc.FILTER_SEQ: [0, 1, 2],
             }
         )
         ballBearingDf = pd.DataFrame(
@@ -105,6 +111,7 @@ class TestMaster(unittest.TestCase):
                     "Industrial Part Length Datum",
                 ],
                 sc.DISP_SEQ: [0, 1, 2, 3, 4],
+                sc.FILTER_SEQ: [0, 1, 2, 3, 4],
             }
         )
         conveyorPulleyDf = pd.DataFrame(
@@ -119,6 +126,7 @@ class TestMaster(unittest.TestCase):
                     "Industrial Part Length Datum",
                 ],
                 sc.DISP_SEQ: [0, 1, 2, 3, 4],
+                sc.FILTER_SEQ: [0, 1, 2, 3, 4],
             }
         )
         flangeDf = pd.DataFrame(
@@ -127,6 +135,7 @@ class TestMaster(unittest.TestCase):
                 sc.CATEGORY_NAME: "FLANGE MOUNT",
                 sc.DESCRIPTOR_NAME: expectedTopCategoryDescriptors,
                 sc.DISP_SEQ: [0, 1, 2],
+                sc.FILTER_SEQ: [0, 1, 2],
             }
         )
         sprocketDf = pd.DataFrame(
@@ -139,6 +148,7 @@ class TestMaster(unittest.TestCase):
                     "Rod Spacing",
                 ],
                 sc.DISP_SEQ: [0, 1, 2],
+                sc.FILTER_SEQ: [0, 1, 2],
             }
         )
         electricMotorDf = pd.DataFrame(
@@ -153,6 +163,7 @@ class TestMaster(unittest.TestCase):
                     "Industrial Part Height",
                 ],
                 sc.DISP_SEQ: [0, 1, 2, 3, 4],
+                sc.FILTER_SEQ: [0, 1, 2, 3, 4],
             }
         )
 
@@ -166,9 +177,16 @@ class TestMaster(unittest.TestCase):
         ]
 
         expectedTopDescriptorsDf = pd.concat(categoryDfs, ignore_index=True)
+        expectedTopDescriptorsDf["FILTER_ENABLED"] = pd.Series(
+            ["Y"] * len(expectedTopDescriptorsDf)
+        )
         print(expectedTopDescriptorsDf)
         actualTopDescriptorsDf = m.getTopDescriptors()
         print(actualTopDescriptorsDf)
+
+        self.assertTrue(
+            (expectedTopDescriptorsDf.columns == actualTopDescriptorsDf.columns).all()
+        )
 
         for column in actualTopDescriptorsDf.columns:
             self.assertTrue(
