@@ -66,6 +66,27 @@ class TestMaster(unittest.TestCase):
             pass
         self.assertTrue(exported, "File is not exported")
 
+    def testGetDfFormattedToDest(self):
+        expected = pd.DataFrame(
+            {
+                "CATEGORY_NAME": [
+                    "Ball Bearings",
+                    "Belts, Sheaves & Pulleys",
+                    "Conveyor Supplies",
+                    "FLANGE MOUNT",
+                ],
+                "DESCRIPTOR NAME1": ["Base to Center Height"] * 3
+                + ["TPSA Certificate"],
+                "DESCRIPTOR NAME2": ["Base to Flange Center Height"] * 3
+                + ["Industrial Part Type"],
+                "DESCRIPTOR NAME3": ["Industrial Part Type"] * 3 + ["Rod Spacing"],
+                "DESCRIPTOR NAME4": ["Industrial Part Length Datum"] * 3 + [""],
+                "DESCRIPTOR NAME5": ["Ambient Temperature Rating"] * 3 + [""],
+            }
+        )
+        actual = cd.getDfFormattedToDest()
+        pdt.assert_frame_equal(expected, actual)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -153,6 +153,31 @@ class CategoryDescriptors:
     def exportToSheet(self):
         self.cdDf.to_excel(self.name)
 
+    def getDfFormattedToDest(self):
+        """returns a version of category descriptors formatted to the destination df style, so that it can be easily joined"""
+        tempDict = {
+            CATEGORY_NAME: [],
+            "DESCRIPTOR NAME1": [],
+            "DESCRIPTOR NAME2": [],
+            "DESCRIPTOR NAME3": [],
+            "DESCRIPTOR NAME4": [],
+            "DESCRIPTOR NAME5": [],
+        }
+        for name, group in self.cdDf.groupby(CATEGORY_NAME):
+            tempDict[CATEGORY_NAME].append(name)
+            descNum = 1
+            for idx, row in group.head().iterrows():
+                column = "DESCRIPTOR NAME" + str(descNum)
+                tempDict[column].append(row[DESCRIPTOR_NAME])
+                descNum += 1
+        numCat = len(tempDict[CATEGORY_NAME])
+        # populate empty descriptors with null values
+        for key in tempDict.keys():
+            while len(tempDict[key]) < numCat:
+                tempDict[key].append("")
+        rv = pd.DataFrame(tempDict)
+        return rv
+
 
 class Destination:
     def __init__(self, destinationSheet) -> None:
@@ -160,14 +185,30 @@ class Destination:
         fileName = destinationSheet.split("/")[-1]
         self.name = "filled_" + destinationSheet
 
-    def getOpenDescriptor(self) -> int:
-        pass
+    def getOpenDescriptor(self, idx) -> int:
+        for descNum in range(1, 6):
+            descName = self.destinationDf["DESCRIPTOR NAME" + str(descNum)][idx]
+            if descName == "" or descName == MASTER_NULL_SYMBOL:
+                return descNum
+        return -1
 
-    def addDescriptorName(self, name, value, uom="") -> None:
+    def addDescriptorName(self, idx, name, value, uom="") -> None:
         pass
 
     def addDescriptors(self):
         # join descriptors from CategoryDescriptors to Destination on "category"
+
+        # for each row:
+        # get category foreign key
+        # get part_number
+        # get category descriptor columns from category descriptor sheet by foreign key
+
+        # for each descriptor column:
+        # clear descriptor column
+
+        # fill descriptor name column with category descriptor sheet
+
+        # fill value and uom columns from master_source sheet
 
         pass
 
