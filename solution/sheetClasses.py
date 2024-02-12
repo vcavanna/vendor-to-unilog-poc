@@ -1,4 +1,5 @@
 import pandas as pd
+from pathlib import Path
 
 # Columns in Master that are not to be included in population analysis
 NOT_MASTER_DESCRIPTORS = set(
@@ -34,8 +35,9 @@ class Solver:
         # return df of descriptors, with associated UOM if there is one.
         # input_df columns included: CATEGORY_CODE, CATEGORY_NAME, DESCRIPTOR_NAME
         # rv columns included: CATEGORY_CODE, CATEGORY_NAME, DESCRIPTOR_NAME, DISP_SEQ (auto generated), FILTER_ENABLED, FILTER_SEQ
-
-        pass
+        topDescriptors = self.master.getTopDescriptors()
+        self.cds.addDescriptors(topDescriptors)
+        self.cds.exportToSheet()
 
 
 class Master:
@@ -107,6 +109,7 @@ class Master:
         return rvDf
 
     def getTopDescriptors(self):
+        """Get the top descriptors and return as a dataframe"""
         groupedCategories = list(self.getGroupedCategories())
         frames = []
 
@@ -175,3 +178,11 @@ class Destination:
 
     def exportToSheet(self):
         pass
+
+
+solver = Solver(
+    "problem_set/test_master_source_dummy.xlsx",
+    "problem_set/category-descriptor-template.xlsx",
+    "problem_set/destination.xlsx",
+)
+solver.formatMasterToCategoryDescriptors()
